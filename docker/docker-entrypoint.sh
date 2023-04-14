@@ -1,53 +1,99 @@
-#!/bin/bash
-set -e
+#!/usr/bin/env bash
+set -Eeuo pipefail
 
-if [[ "$1" == apache2* ]] || [ "$1" == php-fpm ]; then
-  if [ -n "$MYSQL_PORT_3306_TCP" ]; then
-    if [ -z "$BACKDROP_DB_HOST" ]; then
-      BACKDROP_DB_HOST='mysql'
-    else
-      echo >&2 'warning: both BACKDROP_DB_HOST and MYSQL_PORT_3306_TCP found'
-      echo >&2 "  Connecting to BACKDROP_DB_HOST ($BACKDROP_DB_HOST)"
-      echo >&2 '  instead of the linked mysql container'
-    fi
-  fi
+if [[ "$1" == apache2* ]] || [ "$1" = 'php-fpm' ]; then
+	uid="$(id -u)"
+	gid="$(id -g)"
+	if [ "$uid" = '0' ]; then
+		case "$1" in
+			apache2*)
+				user="${APACHE_RUN_USER:-www-data}"
+				group="${APACHE_RUN_GROUP:-www-data}"
 
-  if [ -z "$BACKDROP_DB_HOST" ]; then
-    echo >&2 'error: missing BACKDROP_DB_HOST and MYSQL_PORT_3306_ADDR environment variables'
-    echo >&2 '  Did you forget to --link some_mysql_container:mysql or set an external db'
-    echo >&2 '  with -e BACKDROP_DB_HOST=hostname?'
-    exit 1
-  fi
+				# strip off any '#' symbol ('#1000' is valid syntax for Apache)
+				pound='#'
+				user="${user#$pound}"
+				group="${group#$pound}"
+				;;
+			*) # php-fpm
+				user='www-data'
+				group='www-data'
+				;;
+		esac
+	else
+		user="$uid"
+		group="$gid"
+	fi
 
-  # if we're linked to MySQL and thus have credentials already, let's use them
-  : ${BACKDROP_DB_USER:=${MYSQL_ENV_MYSQL_USER:-root}}
-  if [ "$BACKDROP_DB_USER" = 'root' ]; then
-    : ${BACKDROP_DB_PASSWORD:=$MYSQL_ENV_MYSQL_ROOT_PASSWORD}
-  fi
+	if [ ! -e index.php ] && [ ! -e wp-includes/version.php ]; then
+		# if the directory exists and WordPress doesn't appear to be installed AND the permissions of it are root:root, let's chown it (likely a Docker-created directory)
+		if [ "$uid" = '0' ] && [ "$(stat -c '%u:%g' .)" = '0:0' ]; then
+			chown "$user:$group" .
+		fi
 
-  : ${BACKDROP_DB_PASSWORD:=$MYSQL_ENV_MYSQL_PASSWORD}
-  : ${BACKDROP_DB_NAME:=${MYSQL_ENV_MYSQL_DATABASE:-backdrop}}
-  : ${BACKDROP_DB_PORT:=${MYSQL_ENV_MYSQL_PORT:-3306}}
-  : ${BACKDROP_DB_DRIVER:=${MYSQL_ENV_MYSQL_DRIVER:-mysql}}
+		echo >&2 "WordPress not found in $PWD - copying now..."
+		if [ -n "$(find -mindepth 1 -maxdepth 1 -not -name wp-content)" ]; then
+			echo >&2 "WARNING: $PWD is not empty! (copying anyhow)"
+		fi
+		sourceTarArgs=(
+			--create
+			--file -
+			--directory /usr/src/wordpress
+			--owner "$user" --group "$group"
+		)
+		targetTarArgs=(
+			--extract
+			--file -
+		)
+		if [ "$uid" != '0' ]; then
+			# avoid "tar: .: Cannot utime: Operation not permitted" and "tar: .: Cannot change mode to rwxr-xr-x: Operation not permitted"
+			targetTarArgs+=( --no-overwrite-dir )
+		fi
+		# loop over "pluggable" content in the source, and if it already exists in the destination, skip it
+		# https://github.com/docker-library/wordpress/issues/506 ("wp-content" persisted, "akismet" updated, WordPress container restarted/recreated, "akismet" downgraded)
+		for contentPath in \
+			/usr/src/wordpress/.htaccess \
+			/usr/src/wordpress/wp-content/*/*/ \
+		; do
+			contentPath="${contentPath%/}"
+			[ -e "$contentPath" ] || continue
+			contentPath="${contentPath#/usr/src/wordpress/}" # "wp-content/plugins/akismet", etc.
+			if [ -e "$PWD/$contentPath" ]; then
+				echo >&2 "WARNING: '$PWD/$contentPath' exists! (not copying the WordPress version)"
+				sourceTarArgs+=( --exclude "./$contentPath" )
+			fi
+		done
+		tar "${sourceTarArgs[@]}" . | tar "${targetTarArgs[@]}"
+		echo >&2 "Complete! WordPress has been successfully copied to $PWD"
+	fi
 
-  if [ -z "$BACKDROP_DB_PASSWORD" ]; then
-    echo >&2 'error: missing required BACKDROP_DB_PASSWORD environment variable'
-    echo >&2 '  Did you forget to -e BACKDROP_DB_PASSWORD=... ?'
-    echo >&2
-    echo >&2 '  (Also of interest might be BACKDROP_DB_USER and BACKDROP_DB_NAME.)'
-    exit 1
-  fi
-
-  # lets construct our BACKDROP_SETTINGS and pass them into apache or fpm
-  export BACKDROP_SETTINGS="{\"databases\":{\"default\":{\"default\":{\"host\":\"database\",\"port\":$BACKDROP_DB_PORT,\"username\":\"$BACKDROP_DB_USER\",\"password\":\"$BACKDROP_DB_PASSWORD\",\"database\":\"$BACKDROP_DB_NAME\",\"driver\":\"$BACKDROP_DB_DRIVER\"}}}}"
-  if [[ "$1" == apache2* ]]; then
-    echo "PassEnv BACKDROP_SETTINGS" > /etc/apache2/conf-enabled/backdrop.conf
-  elif [[ "$1" == php-fpm* ]]; then
-    POOL_ENV_LINE="env['BACKDROP_SETTINGS'] = $BACKDROP_SETTINGS"
-    POOL_FILE=/usr/local/etc/php-fpm.d/www.conf
-    grep -q "$POOL_ENV_LINE" "$POOL_FILE" || echo "$POOL_ENV_LINE" >> "$POOL_FILE"
-  fi
-
+	wpEnvs=( "${!WORDPRESS_@}" )
+	if [ ! -s wp-config.php ] && [ "${#wpEnvs[@]}" -gt 0 ]; then
+		for wpConfigDocker in \
+			wp-config-docker.php \
+			/usr/src/wordpress/wp-config-docker.php \
+		; do
+			if [ -s "$wpConfigDocker" ]; then
+				echo >&2 "No 'wp-config.php' found in $PWD, but 'WORDPRESS_...' variables supplied; copying '$wpConfigDocker' (${wpEnvs[*]})"
+				# using "awk" to replace all instances of "put your unique phrase here" with a properly unique string (for AUTH_KEY and friends to have safe defaults if they aren't specified with environment variables)
+				awk '
+					/put your unique phrase here/ {
+						cmd = "head -c1m /dev/urandom | sha1sum | cut -d\\  -f1"
+						cmd | getline str
+						close(cmd)
+						gsub("put your unique phrase here", str)
+					}
+					{ print }
+				' "$wpConfigDocker" > wp-config.php
+				if [ "$uid" = '0' ]; then
+					# attempt to ensure that wp-config.php is owned by the run user
+					# could be on a filesystem that doesn't allow chown (like some NFS setups)
+					chown "$user:$group" wp-config.php || true
+				fi
+				break
+			fi
+		done
+	fi
 fi
 
 exec "$@"
