@@ -8,7 +8,7 @@ autoPromotionSeconds: 120
 revisionHistoryLimit: 2
 
 image:
-  repository: docker pull budarkevichigor/wordpress
+  repository: budarkevichigor/wordpress
   pullPolicy: IfNotPresent
   # Overrides the image tag whose default is the chart appVersion.
   # tag: "1.0.2"
