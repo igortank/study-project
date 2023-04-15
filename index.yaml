@@ -3,7 +3,17 @@ entries:
   wordpress:
   - apiVersion: v2
     appVersion: 1.0.2
-    created: "2023-04-15T11:48:13.614916346Z"
+    created: "2023-04-15T14:34:34.575752146Z"
+    description: A Helm chart for Kubernetes
+    digest: d135a05e4f133b5283b1e7f1e0003c8e6d6413c4c000b17b81b084c9d7e44a7e
+    name: wordpress
+    type: application
+    urls:
+    - https://igortank.github.io/study-project/wordpress-1.0.3.tgz
+    version: 1.0.3
+  - apiVersion: v2
+    appVersion: 1.0.2
+    created: "2023-04-15T14:34:34.577170218Z"
     description: A Helm chart for Kubernetes
     digest: 80bd22d2fbac407e04810d91da798f372acd15f7d2e6e835249e8cd0ada3e97f
     name: wordpress
@@ -11,4 +21,4 @@ entries:
     urls:
     - https://igortank.github.io/study-project/helm-releases/wordpress-1.0.2.tgz
     version: 1.0.2
-generated: "2023-04-15T11:48:13.613623974Z"
+generated: "2023-04-15T14:34:34.57373271Z"
