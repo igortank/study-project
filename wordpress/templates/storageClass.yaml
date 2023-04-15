@@ -1,0 +1,9 @@
+---
+apiVersion: storage.k8s.io/v1
+kind: StorageClass
+metadata:
+  name: nfs-{{ .Chart.Name }}
+provisioner: cluster.local/nfs-nfs-subdir-external-provisioner
+parameters:
+  onDelete: "{{ .Values.storageClass.onDelete }}"
+  pathPattern: "{{ .Values.storageClass.pathPattern }}"
