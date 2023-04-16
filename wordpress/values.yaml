@@ -4,7 +4,7 @@
 
 replicaCount: 1
 autoPromotionEnabled: false
-autoPromotionSeconds: 120
+autoPromotionSeconds: 60
 revisionHistoryLimit: 4
 
 image:
@@ -101,8 +101,3 @@ mnt:
   mountPath: /var/www/html/wp-content/
   subPath: wp-content
 
-nodeSelector: {}
-
-tolerations: []
-
-affinity: {}
