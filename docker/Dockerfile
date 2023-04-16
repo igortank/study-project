@@ -120,15 +120,17 @@ RUN set -eux; \
 # (replace all instances of "%h" with "%a" in LogFormat)
 	find /etc/apache2 -type f -name '*.conf' -exec sed -ri 's/([[:space:]]*LogFormat[[:space:]]+"[^"]*)%h([^"]*")/\1%a\2/g' '{}' +
 
+ENV VERSION 1.0.3
 RUN set -eux; \
-	version='6.2'; \
-	sha1='6fcc4c21b107a355e3df0798851d41e0d85f0e6d'; \
+	#version='1.0.3'; \
+	#sha1='6fcc4c21b107a355e3df0798851d41e0d85f0e6d'; \
 	\
-	curl -o wordpress.tar.gz -fL "https://wordpress.org/wordpress-$version.tar.gz"; \
-	echo "$sha1 *wordpress.tar.gz" | sha1sum -c -; \
+	curl -o wordpress.tar.gz -fL "https://github.com/igortank/wordpress_st/archive/refs/tags/$VERSION.tar.gz"; \
+	#echo "$sha1 *wordpress.tar.gz" | sha1sum -c -; \
 	\
 # upstream tarballs include ./wordpress/ so this gives us /usr/src/wordpress
 	tar -xzf wordpress.tar.gz -C /usr/src/; \
+	mv /usr/src/wordpress_st-$VERSION /usr/src/wordpress; \
 	rm wordpress.tar.gz; \
 	\
 # https://wordpress.org/support/article/htaccess/
