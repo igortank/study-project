@@ -11,10 +11,29 @@ spec:
     matchLabels:
       {{- include "wordpress.selectorLabels" . | nindent 6 }}
   strategy:
+    {{- if .Values.deployStrategy.blueGreenEnable -}}
     blueGreen:
       activeService: {{ template "wordpress.fullname" . }}
       previewService: {{ template "wordpress.fullname" . }}-preview
-      autoPromotionEnabled: {{ .Values.autoPromotionEnabled }}
+      autoPromotionEnabled: {{ .Values.deployStrategy.autoPromotionEnabled }}
+      autoPromotionSeconds: {{ .Values.deployStrategy.autoPromotionSeconds }}
+      previewReplicaCount: {{ .Values.deployStrategy.previewReplicaCount }}
+      scaleDownDelaySeconds: {{ .Values.deployStrategy.scaleDownDelaySeconds }}
+    {{- else }}
+    canary:
+      canaryService: {{ template "wordpress.fullname" . }}-preview
+      stableService: {{ template "wordpress.fullname" . }}
+      trafficRouting:
+        nginx:
+          stableIngress: {{ template "wordpress.fullname" . }}
+      steps:
+      - setWeight: 25
+      - pause: {duration: {{ .Values.deployStrategy.pauseDuration }}}
+      - setWeight: 50
+      - pause: {duration: {{ .Values.deployStrategy.pauseDuration }}}
+      - setWeight: 75
+      - pause: {duration: {{ .Values.deployStrategy.pauseDuration }}}
+    {{- end }}
   template:
     metadata:
       {{- with .Values.podAnnotations }}

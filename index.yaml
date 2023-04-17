@@ -3,7 +3,17 @@ entries:
   wordpress:
   - apiVersion: v2
     appVersion: 1.0.3
-    created: "2023-04-16T12:01:46.522851019Z"
+    created: "2023-04-17T09:25:00.152860479Z"
+    description: A Helm chart for Kubernetes
+    digest: c8370dbfed5c9319d2654c3cf11a2c7edff6140f6a44da006d2e9e8dbebcaa03
+    name: wordpress
+    type: application
+    urls:
+    - https://igortank.github.io/study-project/helm-releases/wordpress-1.0.7.tgz
+    version: 1.0.7
+  - apiVersion: v2
+    appVersion: 1.0.3
+    created: "2023-04-17T09:25:00.151993078Z"
     description: A Helm chart for Kubernetes
     digest: 5ab4ddd8db2b06ac0cd47de6db727f97240526424c3e8543ba19abcb5acdb450
     name: wordpress
@@ -13,7 +23,7 @@ entries:
     version: 1.0.6
   - apiVersion: v2
     appVersion: 1.0.2
-    created: "2023-04-16T12:01:46.521880452Z"
+    created: "2023-04-17T09:25:00.145660039Z"
     description: A Helm chart for Kubernetes
     digest: 10bf322c18f4718a7cc7c8f5b309aec57d3d13f6f4656ea14a0d82c126dae29b
     name: wordpress
@@ -23,7 +33,7 @@ entries:
     version: 1.0.5
   - apiVersion: v2
     appVersion: 1.0.2
-    created: "2023-04-16T12:01:46.50538788Z"
+    created: "2023-04-17T09:25:00.13447796Z"
     description: A Helm chart for Kubernetes
     digest: a2fd3580a0f23a8548893a3dbfc29423860f50924671e6ff0983499ed2c24ae0
     name: wordpress
@@ -33,7 +43,7 @@ entries:
     version: 1.0.4
   - apiVersion: v2
     appVersion: 1.0.2
-    created: "2023-04-16T12:01:46.503891406Z"
+    created: "2023-04-17T09:25:00.121387839Z"
     description: A Helm chart for Kubernetes
     digest: d135a05e4f133b5283b1e7f1e0003c8e6d6413c4c000b17b81b084c9d7e44a7e
     name: wordpress
@@ -43,7 +53,7 @@ entries:
     version: 1.0.3
   - apiVersion: v2
     appVersion: 1.0.2
-    created: "2023-04-16T12:01:46.501973364Z"
+    created: "2023-04-17T09:25:00.107863252Z"
     description: A Helm chart for Kubernetes
     digest: 80bd22d2fbac407e04810d91da798f372acd15f7d2e6e835249e8cd0ada3e97f
     name: wordpress
@@ -51,4 +61,4 @@ entries:
     urls:
     - https://igortank.github.io/study-project/helm-releases/wordpress-1.0.2.tgz
     version: 1.0.2
-generated: "2023-04-16T12:01:46.495948566Z"
+generated: "2023-04-17T09:25:00.093034695Z"
