@@ -45,6 +45,7 @@ pipeline {
             env.encodedPass=URLEncoder.encode(PASS, "UTF-8")
           }
           sh """
+            git checkout master
             git config --global user.email ${env.GIT_REPO_EMAIL}
             git add init-app/wordpress-argo.yaml
             git commit -m "Change file wordpress-argo.yaml tag ${IMAGE_TAG}"
