@@ -28,6 +28,7 @@ pipeline {
       environment {
         GIT_REPO_EMAIL = 'budarkevichigor@mail.ru'
         GIT_REPO_BRANCH = "master"
+        //GIT_CREDS = credentials('github')
       }
       steps {
         script {
@@ -42,16 +43,14 @@ pipeline {
         {
           script {
             env.encodedPass=URLEncoder.encode(PASS, "UTF-8")
-            {
-              sh """
-                git config --global user.email ${env.GIT_REPO_EMAIL}
-                git add --all
-                git commit -m "Change file wordpress-argo.yaml tag ${env(IMAGE_TAG)}"
-                git push https://${USER}:${encodedPass}@github.com/igortank/study-project.git
-                sleep 5s
-              """
-            }
           }
+          sh """
+            git config --global user.email ${env.GIT_REPO_EMAIL}
+            git add --all
+            git commit -m "Change file wordpress-argo.yaml tag ${env(IMAGE_TAG)}"
+            git push https://${USER}:${encodedPass}@github.com/igortank/study-project.git
+            sleep 5s
+          """
         }
       }
     }
