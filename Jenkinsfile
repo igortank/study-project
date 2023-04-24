@@ -3,26 +3,15 @@ pipeline {
     
   environment {
     IMAGE_REPO = "budarkevichigor/wordpress"
-    IMAGE_TAG =  ""
+    IMAGE_TAG = "1.0.4"
     // Instead of DOCKERHUB_USER, use your Dockerhub name
   }
   stages {
-    stage('Cloning Git') {
-      environment {
-        DOCKERHUB_CREDS = credentials('dockerhub')
-      }
-      steps {
-        dir('wordpress') 
-        {
-          git url: 'https://github.com/igortank/study-project.git', branch: 'master'
-        }
-      }
-    }
     stage('Building and push image') {
       steps{
-        sh '$IMAGE_TAG = cat /tmp/packageTeg | cut -c 13-18'
         script {
-          dockerImage = docker.build IMAGE_REPO + ":" + IMAGE_TAG , ".wordpress/docker/"
+          sh '$IMAGE_TAG = cat /tmp/packageTeg | cut -c 13-18'
+          dockerImage = docker.build IMAGE_REPO + ":" + IMAGE_TAG , ".docker/"
           docker.withRegistry( '', DOCKERHUB_CREDS ) {
             dockerImage.push()
           }
@@ -39,8 +28,8 @@ pipeline {
           sh """
             echo $IMAGE_TAG
             ls -lth
-            yq eval '.spec.source.helm.parameters[0].value = env(IMAGE_TAG)' -i wordpress/init-app/wordpress-argo.yaml
-            cat wordpress/init-app/wordpress-argo.yaml
+            yq eval '.spec.source.helm.parameters[0].value = env(IMAGE_TAG)' -i init-app/wordpress-argo.yaml
+            cat init-app/wordpress-argo.yaml
           """
         }
         withCredentials([usernamePassword(credentialsId: 'github', usernameVariable: 'USER', passwordVariable: 'PASS')]) 
@@ -49,7 +38,6 @@ pipeline {
             env.encodedPass=URLEncoder.encode(PASS, "UTF-8")
             {
               sh """
-                cd wordpress
                 git config --global user.email ${env.GIT_REPO_EMAIL}
                 git add --all
                 git commit -m "Change file wordpress-argo.yaml tag ${env(IMAGE_TAG)}"
