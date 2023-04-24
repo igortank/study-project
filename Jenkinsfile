@@ -46,9 +46,9 @@ pipeline {
           }
           sh """
             git config --global user.email ${env.GIT_REPO_EMAIL}
-            git add --all
-            git commit -m "Change file wordpress-argo.yaml tag env(IMAGE_TAG)"
-            git push https://${USER}:${encodedPass}@github.com/igortank/study-project.git
+            git add init-app/wordpress-argo.yaml
+            git commit -m "Change file wordpress-argo.yaml tag ${IMAGE_TAG}"
+            git push https://${USER}:${encodedPass}@github.com/igortank/study-project.git master
             sleep 5s
           """
         }
