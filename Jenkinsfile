@@ -12,7 +12,7 @@ pipeline {
   stages {
     stage('Building and push image') {
       environment {
-        DOCKERHUB_CREDS = credentials('dockerhub')
+        DOCKERHUB_CREDS = 'dockerhub'
       }
       steps{
         script {
