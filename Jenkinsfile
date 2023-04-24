@@ -3,7 +3,7 @@ pipeline {
     
   environment {
     IMAGE_REPO = "budarkevichigor/wordpress"
-    IMAGE_TAG = cat /tmp/packageTeg | cut -c 13-18
+    IMAGE_TAG =  ""
     // Instead of DOCKERHUB_USER, use your Dockerhub name
   }
   stages {
@@ -20,6 +20,7 @@ pipeline {
     }
     stage('Building and push image') {
       steps{
+        sh '$IMAGE_TAG = cat /tmp/packageTeg | cut -c 13-18'
         script {
           dockerImage = docker.build IMAGE_REPO + ":" + IMAGE_TAG , ".wordpress/docker/"
           docker.withRegistry( '', DOCKERHUB_CREDS ) {
