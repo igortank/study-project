@@ -3,14 +3,17 @@ pipeline {
     
   environment {
     IMAGE_REPO = "budarkevichigor/wordpress"
-    IMAGE_TAG = "1.0.4"
+    IMAGE_TAG = """${sh(
+                returnStdout: true,
+                script: 'cat /tmp/packageTeg | cut -c 13-18'
+            ).trim()}"""
     // Instead of DOCKERHUB_USER, use your Dockerhub name
   }
   stages {
     stage('Building and push image') {
       steps{
         script {
-          sh '$IMAGE_TAG = cat /tmp/packageTeg | cut -c 13-18'
+          //sh '$IMAGE_TAG = cat /tmp/packageTeg | cut -c 13-18'
           dockerImage = docker.build IMAGE_REPO + ":" + IMAGE_TAG , ".docker/"
           docker.withRegistry( '', DOCKERHUB_CREDS ) {
             dockerImage.push()
