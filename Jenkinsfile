@@ -11,6 +11,9 @@ pipeline {
   }
   stages {
     stage('Building and push image') {
+      environment {
+        DOCKERHUB_CREDS = credentials('dockerhub')
+      }
       steps{
         script {
           //sh '$IMAGE_TAG = cat /tmp/packageTeg | cut -c 13-18'
