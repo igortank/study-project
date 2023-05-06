@@ -121,12 +121,12 @@ RUN set -eux; \
 	find /etc/apache2 -type f -name '*.conf' -exec sed -ri 's/([[:space:]]*LogFormat[[:space:]]+"[^"]*)%h([^"]*")/\1%a\2/g' '{}' +
 
 #ENV VERSION 1.0.4
+COPY /tmp/package.tar.gz ./wordpress.tar.gz \
 RUN set -eux; \
 	#version='1.0.3'; \
 	#sha1='6fcc4c21b107a355e3df0798851d41e0d85f0e6d'; \
 	\
 	#curl -o wordpress.tar.gz -fL "https://github.com/igortank/wordpress_st/archive/refs/tags/$VERSION.tar.gz"; \
-	COPY /tmp/package.tar.gz ./wordpress.tar.gz \
 	#echo "$sha1 *wordpress.tar.gz" | sha1sum -c -; \
 	\
 # upstream tarballs include ./wordpress/ so this gives us /usr/src/wordpress
