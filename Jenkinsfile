@@ -1,5 +1,5 @@
 pipeline {
-    agent { label 'master'}
+  agent { label 'master'}
     
   environment {
     IMAGE_REPO = "budarkevichigor/wordpress"
@@ -24,6 +24,12 @@ pipeline {
         }
       }
     } 
+	stage('Clone repository') {
+        steps {
+            deleteDir()
+            git url: 'https://github.com/igortank/study-project.git'
+        }
+    }
     stage('Deploy') {
       environment {
         GIT_REPO_EMAIL = 'budarkevichigor@mail.ru'
