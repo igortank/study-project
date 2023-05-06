@@ -4,9 +4,9 @@ metadata:
   name: wordpress
   namespace: argocd
   annotations:
-    notifications.argoproj.io/subscribe.on-deployed.app-deployed: ""
-    notifications.argoproj.io/subscribe.on-sync-failed.app-sync-failed: ""
-    notifications.argoproj.io/subscribe.on-health-degraded.app-health-degraded: ""
+    notifications.argoproj.io/subscribe.on-deployed.slack_webhook: ""
+    notifications.argoproj.io/subscribe.on-sync-failed.slack_webhook: ""
+    notifications.argoproj.io/subscribe.on-health-degraded.slack_webhook: ""
 spec:
   destination:
     namespace: project
