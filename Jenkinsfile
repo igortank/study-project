@@ -17,7 +17,7 @@ pipeline {
       steps{
         script {
           //sh '$IMAGE_TAG = cat /tmp/packageTeg | cut -c 13-18'
-          dockerImage = docker.build IMAGE_REPO + ":" + IMAGE_TAG , "./docker/"
+          dockerImage = docker.build IMAGE_REPO + ":" + IMAGE_TAG , "--network host ./docker/"
           docker.withRegistry( '', DOCKERHUB_CREDS ) {
             dockerImage.push()
           }
