@@ -128,6 +128,7 @@ RUN set -eux; \
 	#curl -o wordpress.tar.gz -fL "https://github.com/igortank/wordpress_st/archive/refs/tags/$VERSION.tar.gz"; \
 	#echo "$sha1 *wordpress.tar.gz" | sha1sum -c -; \
 # upstream tarballs include ./wordpress/ so this gives us /usr/src/wordpress
+	mkdir /usr/src/wordpress; \
 	tar -xzf wordpress.tar.gz -C /usr/src/wordpress/; \
 	#mv /usr/src/wordpress_st-$VERSION /usr/src/wordpress; \
 	rm wordpress.tar.gz; \
