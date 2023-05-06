@@ -3,6 +3,10 @@ kind: Application
 metadata:
   name: wordpress
   namespace: argocd
+  annotations:
+    notifications.argoproj.io/subscribe.on-deployed.slack_webhook: ""
+    notifications.argoproj.io/subscribe.on-sync-failed.slack_webhook: ""
+    notifications.argoproj.io/subscribe.on-health-degraded.slack_webhook: ""
 spec:
   destination:
     namespace: project
@@ -15,7 +19,7 @@ spec:
     helm:
       parameters:
         - name: image.tag
-          value: 1.0.4
+          value: v1.0.2
   syncPolicy:
     automated:
       prune: true
