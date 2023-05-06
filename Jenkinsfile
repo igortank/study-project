@@ -31,22 +31,18 @@ pipeline {
         //GIT_CREDS = credentials('github')
       }
       steps {
-        script {
-          sh """
-            echo $IMAGE_TAG
-            ls -lth
-            yq eval '.spec.source.helm.parameters[0].value = env(IMAGE_TAG)' -i init-app/wordpress-argo.yaml
-            cat init-app/wordpress-argo.yaml
-          """
-        }
         withCredentials([usernamePassword(credentialsId: 'github', usernameVariable: 'USER', passwordVariable: 'PASS')]) 
         {
           script {
             env.encodedPass=URLEncoder.encode(PASS, "UTF-8")
           }
           sh """
+            echo $IMAGE_TAG
             git checkout master
             git config --global user.email ${env.GIT_REPO_EMAIL}
+            ls -lth
+            yq eval '.spec.source.helm.parameters[0].value = env(IMAGE_TAG)' -i init-app/wordpress-argo.yaml
+            cat init-app/wordpress-argo.yaml
             git add init-app/wordpress-argo.yaml
             git commit -m "Change file wordpress-argo.yaml tag ${IMAGE_TAG}"
             git push https://${USER}:${encodedPass}@github.com/igortank/study-project.git master
