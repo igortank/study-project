@@ -44,6 +44,7 @@ pipeline {
             }
             steps{
                 script {
+                    sh 'cp /tmp/wordpress.tar.gz ./docker/wordpress.tar.gz'
                     dockerImage = docker.build IMAGE_REPO + ":" + IMAGE_TAG , "--network host ./docker/"
                     docker.withRegistry( '', DOCKERHUB_CREDS ) {
                         dockerImage.push()
