@@ -19,7 +19,7 @@ spec:
     helm:
       parameters:
         - name: image.tag
-          value: v1.0.3
+          value: v1.0.2
   syncPolicy:
     automated:
       prune: true
