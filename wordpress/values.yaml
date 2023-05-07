@@ -106,6 +106,7 @@ pvc:
 storageClass:
   onDelete: "retain"
   pathPattern: "/IgorBudarkevich/wordpress/"
+  provisioner: cluster.local/nfs-nfs-subdir-external-provisioner
 
 mnt:
   mountPath: /var/www/html/wp-content/
