@@ -9,7 +9,7 @@ pipeline {
         IMAGE_REPO = "budarkevichigor/wordpress"
         IMAGE_TAG = """${sh(
             returnStdout: true,
-            script: 'cat /tmp/packageTag | sed 's|.*tags/||''
+            script: 'cat /tmp/packageTag | sed \'s|.*tags/||\''
         ).trim()}"""
     }
     
