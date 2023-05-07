@@ -1,0 +1,42 @@
+name: Check Kubernetes YAMLs with kube-linter
+
+on:
+  push:
+    tags:
+      - "v_*.*.*"
+
+jobs:
+  scan:
+    runs-on: ubuntu-latest
+    env:
+      result_file: result.log
+    steps:
+      - uses: actions/checkout@v2
+      
+      - name: Scan yaml files with kube-linter
+        uses: stackrox/kube-linter-action@v1.0.4
+        id: kube-linter-action-scan
+        with:
+          directory: ./wordpress/
+          format: plain
+          output-file: ${{env.result_file}}
+        continue-on-error: true
+      - name: result
+        uses: actions/upload-artifact@v2
+        with:
+          path: ${{ env.result_file }}
+  slack:
+    needs: scan
+    runs-on: ubuntu-latest
+    steps:
+       - name: Slack notification
+        uses: rtCamp/action-slack-notify@v2
+        if: success()
+        env:
+          SLACK_CHANNEL: notification_github
+          SLACK_COLOR: 'green'
+          SLACK_ICON: https://github.com/rtCamp.png?size=48
+          SLACK_MESSAGE: "Check result on GitHub."
+          SLACK_TITLE: 'DRUPAL KUBE-LINTER CHECK'
+          SLACK_USERNAME: rtCamp
+          SLACK_WEBHOOK: ${{ secrets.SLACK_WEBHOOK }}
