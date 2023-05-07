@@ -9,8 +9,6 @@ data:
     headers:
     - name: Content-Type
       value: application/json
-  defaultTriggers: |
-    - on-deployed
   trigger.on-health-degraded: |
     - description: Application has degraded
       send:
