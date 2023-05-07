@@ -6,6 +6,8 @@ metadata:
     {{- include "wordpress.labels" . | nindent 4 }}
 spec:
   replicas: {{ .Values.replicaCount }}
+  rollbackWindow:
+    revisions: {{ .Values.rollbackWindow }}
   revisionHistoryLimit: {{ .Values.revisionHistoryLimit }}
   selector:
     matchLabels:

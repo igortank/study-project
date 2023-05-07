@@ -4,6 +4,7 @@
 
 replicaCount: 1
 revisionHistoryLimit: 3
+rollbackWindow: 3
 
 deployStrategy:
   blueGreenEnable: false
