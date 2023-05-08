@@ -15,7 +15,7 @@ spec:
   source:
     chart: wordpress
     repoURL: https://igortank.github.io/study-project/
-    targetRevision: 1.1.1
+    targetRevision: 1.1.2
     helm:
       parameters:
         - name: image.tag
