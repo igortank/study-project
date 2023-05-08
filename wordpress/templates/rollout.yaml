@@ -6,8 +6,6 @@ metadata:
     {{- include "wordpress.labels" . | nindent 4 }}
 spec:
   replicas: {{ .Values.replicaCount }}
-  rollbackWindow:
-    revisions: {{ .Values.rollbackWindow }}
   revisionHistoryLimit: {{ .Values.revisionHistoryLimit }}
   selector:
     matchLabels:
@@ -32,9 +30,7 @@ spec:
       - setWeight: 25
       - pause: {duration: {{ .Values.deployStrategy.pauseDuration }}}
       - setWeight: 50
-      - pause: {duration: {{ .Values.deployStrategy.pauseDuration }}}
-      - setWeight: 75
-      - pause: {duration: {{ .Values.deployStrategy.pauseDuration }}}
+      - pause: {}
     {{- end }}
   template:
     metadata:

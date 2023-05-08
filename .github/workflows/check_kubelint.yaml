@@ -12,7 +12,6 @@ jobs:
       result_file: result.log
     steps:
       - uses: actions/checkout@v2
-      
       - name: Scan yaml files with kube-linter
         uses: stackrox/kube-linter-action@v1.0.4
         id: kube-linter-action-scan
@@ -37,6 +36,6 @@ jobs:
           SLACK_COLOR: 'green'
           SLACK_ICON: https://github.com/rtCamp.png?size=48
           SLACK_MESSAGE: "Check result on GitHub."
-          SLACK_TITLE: 'DRUPAL KUBE-LINTER CHECK'
+          SLACK_TITLE: 'KUBE-LINTER CHECK'
           SLACK_USERNAME: rtCamp
           SLACK_WEBHOOK: ${{ secrets.SLACK_WEBHOOK }}
