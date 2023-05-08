@@ -20,7 +20,7 @@ kind: Service
 metadata:
   name: {{ include "wordpress.fullname" . }}-preview
   labels:
-    {{- include "wordpress.labels" . | nindent 4 }}-preview
+    {{- include "wordpress.labels" . | nindent 4 }}
 spec:
   type: {{ .Values.service.type }}
   ports:
