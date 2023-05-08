@@ -3,6 +3,8 @@ apiVersion: storage.k8s.io/v1
 kind: StorageClass
 metadata:
   name: nfs-{{ .Chart.Name }}
+  labels:
+    {{- include "wordpress.labels" . | nindent 4 }}
 provisioner: {{ .Values.storageClass.provisioner }}
 parameters:
   onDelete: "{{ .Values.storageClass.onDelete }}"
