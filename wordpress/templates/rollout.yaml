@@ -26,8 +26,8 @@ spec:
       trafficRouting:
         nginx:
           stableIngress: {{ template "wordpress.fullname" . }}
-      additionalIngressAnnotations:
-        canary-by-cookie: "my-cookie"
+          additionalIngressAnnotations:
+            canary-by-cookie: "my-cookie"
       steps:
       - setWeight: 25
       - pause: {duration: {{ .Values.deployStrategy.pauseDuration }}}
