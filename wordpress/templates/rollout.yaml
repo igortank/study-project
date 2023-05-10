@@ -27,7 +27,9 @@ spec:
         nginx:
           stableIngress: {{ template "wordpress.fullname" . }}
           additionalIngressAnnotations:
-            canary-by-cookie: "my-cookie"
+            affinity: "cookie"
+            session-cookie-expires: "172800"
+            session-cookie-max-age: "172800"
       steps:
       - setWeight: 25
       - pause: {duration: {{ .Values.deployStrategy.pauseDuration }}}
