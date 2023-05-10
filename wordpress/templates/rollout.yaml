@@ -28,7 +28,7 @@ spec:
           stableIngress: {{ template "wordpress.fullname" . }}
           additionalIngressAnnotations:
             affinity: "cookie"
-            session-cookie-expires: "172800"
+            session-cookie-name: "route"
             session-cookie-max-age: "172800"
       steps:
       - setWeight: 25
