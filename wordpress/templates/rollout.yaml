@@ -26,14 +26,8 @@ spec:
       trafficRouting:
         nginx:
           stableIngress: {{ template "wordpress.fullname" . }}
-          additionalIngressAnnotations:
-            affinity: "cookie"
-            session-cookie-name: "route"
-            session-cookie-max-age: "172800"
       steps:
-      - setWeight: 25
-      - pause: {duration: {{ .Values.deployStrategy.pauseDuration }}}
-      - setWeight: 50
+      - setWeight: 100
       - pause: {}
     {{- end }}
   template:
