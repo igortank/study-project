@@ -26,7 +26,7 @@ spec:
       trafficRouting:
         nginx:
           stableIngress: {{ template "wordpress.fullname" . }}
-          additionalIngressAnno: 
+          additionalIngressAnnotations: 
             affinity: "cookie"
             session-cookie-name: "route"
             session-cookie-expires: "172800"
