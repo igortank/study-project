@@ -27,7 +27,7 @@ spec:
         nginx:
           stableIngress: {{ template "wordpress.fullname" . }}
       steps:
-      - setWeight: 100
+      - setWeight: 50
       - pause: {}
     {{- end }}
   template:
